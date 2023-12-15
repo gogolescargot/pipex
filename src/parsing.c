@@ -12,7 +12,7 @@
 
 #include "../inc/pipex.h"
 
-char	*ft_strndup(char *src, size_t start, size_t end)
+static char	*ft_strndup(char *src, size_t start, size_t end)
 {
 	char	*dest;
 	int		i;
@@ -31,18 +31,41 @@ char	*ft_strndup(char *src, size_t start, size_t end)
 	return (dest);
 }
 
-char	*get_command(char *s)
+char* get_command(char *s)
 {
-	size_t	i;
-	size_t	j;
+	int		fd[2];
+	char	*line;
+	pid_t	pid1;
 
-	i = 0;
-	j = 0;
-	while (s[i] == 32 || (s[i] >= 9 && s[i] <= 13))
-		i++;
-	while (s[i + j] && s[i + j] != 32 && (s[i + j] < 9 || s[i + j] > 13))
-		j++;
-	return (ft_strndup(s, i, i + j));
+	if (pipe(fd) == -1)
+		return (NULL);
+	pid1 = fork();
+	if (pid1 < 0)
+		return (NULL);
+	if (pid1 == 0)
+	{
+		dup2(fd[1], 1);
+		close(fd[0]);
+		close(fd[1]);
+		char* args[] = {"/bin/which", s, NULL};
+		execve(args[0], args, NULL);
+		perror("Exec");
+		exit(1);
+    }
+	else
+	{
+		close(fd[1]);
+		line = get_next_line(fd[0]);
+		get_next_line(-1);
+		close(fd[0]);
+		waitpid(pid1, NULL, 0);
+    }
+	if (!line || !line[0])
+		return (NULL);
+	line[ft_strlen(line) - 1] = 0;
+	if (access(line, (F_OK | X_OK)) < 0)
+		return (free(line), NULL);
+    return (line);
 }
 
 char	*get_param(char *s)

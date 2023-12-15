@@ -29,7 +29,7 @@ NAME_B	=
 
 LIBFT	=	$(LIBFT_DIR)libft.a
 
-SRCS	=	main.c parsing.c\
+SRCS	=	main.c parsing.c free.c \
 
 SRCS_B	=	 \
 
