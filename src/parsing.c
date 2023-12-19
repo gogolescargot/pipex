@@ -12,26 +12,32 @@
 
 #include "../inc/pipex.h"
 
-static char	*ft_strndup(char *src, size_t start, size_t end)
+bool	exec_command(int *fd, char *s, char **envp)
 {
-	char	*dest;
-	int		i;
+	char	*args[3];
 
-	i = 0;
-	dest = malloc((end - start + 1) * sizeof(char));
-	if (!dest || !src)
-		return (NULL);
-	while (src[start] && start < end)
+	dup2(fd[1], 1);
+	close(fd[0]);
+	close(fd[1]);
+	args[0] = "/bin/which";
+	args[1] = s;
+	args[2] = NULL;
+	if (access(args[0], F_OK) == -1)
 	{
-		dest[i] = src[start];
-		i++;
-		start++;
+		perror("No such file or directory");
+		return (false);
 	}
-	dest[i] = 0;
-	return (dest);
+	else if (access(args[0], X_OK) == -1)
+	{
+		perror("Permission denied");
+		return (false);
+	}
+	execve(args[0], args, envp);
+	perror("Exec");
+	exit(127);
 }
 
-char* get_command(char *s)
+char	*get_command(char *s, char **envp)
 {
 	int		fd[2];
 	char	*line;
@@ -42,42 +48,28 @@ char* get_command(char *s)
 	pid1 = fork();
 	if (pid1 < 0)
 		return (NULL);
-	if (pid1 == 0)
-	{
-		dup2(fd[1], 1);
-		close(fd[0]);
-		close(fd[1]);
-		char* args[] = {"/bin/which", s, NULL};
-		execve(args[0], args, NULL);
-		perror("Exec");
-		exit(1);
-    }
-	else
-	{
-		close(fd[1]);
-		line = get_next_line(fd[0]);
-		get_next_line(-1);
-		close(fd[0]);
-		waitpid(pid1, NULL, 0);
-    }
+	if (pid1 == 0 && exec_command(fd, s, envp) == false)
+		return (NULL);
+	close(fd[1]);
+	line = get_next_line(fd[0]);
+	get_next_line(-1);
+	close(fd[0]);
 	if (!line || !line[0])
 		return (NULL);
-	line[ft_strlen(line) - 1] = 0;
-	if (access(line, (F_OK | X_OK)) < 0)
-		return (free(line), NULL);
-    return (line);
+	return (line[ft_strlen(line) - 1] = 0, line);
 }
 
-char	*get_param(char *s)
+void	print_output(int fd)
 {
-	size_t	i;
+	char	*line;
 
-	i = 0;
-	while (s[i] == 32 || (s[i] >= 9 && s[i] <= 13))
-		i++;
-	while (s[i] && s[i] != 32 && (s[i] < 9 || s[i] > 13))
-		i++;
-	while (s[i] == 32 || (s[i] >= 9 && s[i] <= 13))
-		i++;
-	return (ft_strndup(s, i, ft_strlen(s)));
+	while (1)
+	{
+		line = get_next_line(fd);
+		if (!line)
+			break ;
+		ft_printf("%s", line);
+		free(line);
+	}
+	get_next_line(-1);
 }

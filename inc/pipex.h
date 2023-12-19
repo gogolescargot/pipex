@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #ifndef PIPEX_H
 # define PIPEX_H
 
@@ -19,11 +18,16 @@
 # include <stdlib.h>
 # include <stdio.h>
 # include <fcntl.h>
+# include <string.h>
 # include <sys/wait.h>
 # include "../libft/inc/libft.h"
 
-char	*get_command(char *s);
-char	*get_param(char *s);
+char	*get_command(char *s, char **envp);
 void	free_array(char **array);
+void	input_fd(int *fd, char **argv);
+void	output_fd(int *fd, char **argv);
+void	exec_child(char **argv, char **envp);
+void	exec_parent(char **argv, char **envp);
+void	print_output(int fd);
 
 #endif
