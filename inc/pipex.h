@@ -20,9 +20,12 @@
 # include <fcntl.h>
 # include <string.h>
 # include <sys/wait.h>
+# include <errno.h>
 # include "../libft/inc/libft.h"
 
-char	*get_command(char *s, char **envp);
+void	handle_error(char *str, int exit_code);
+char	*get_path_cmd(char *cmd, char **envp);
+int		check_path_cmd(char *cmd, char **envp);
 void	free_array(char **array);
 void	input_fd(int *fd, char **argv);
 void	output_fd(int *fd, char **argv);

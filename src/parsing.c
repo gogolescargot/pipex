@@ -12,64 +12,86 @@
 
 #include "../inc/pipex.h"
 
-bool	exec_command(int *fd, char *s, char **envp)
+char	*get_path_line(char **envp)
 {
-	char	*args[3];
+	int		i;
+	int		j;
+	char	*str;
 
-	dup2(fd[1], 1);
-	close(fd[0]);
-	close(fd[1]);
-	args[0] = "/bin/which";
-	args[1] = s;
-	args[2] = NULL;
-	if (access(args[0], F_OK) == -1)
+	i = 0;
+	while (envp[i])
 	{
-		perror("No such file or directory");
-		return (false);
+		j = 0;
+		while (envp[i][j] && envp[i][j] != '=')
+			j++;
+		str = ft_substr(envp[i], 0, j);
+		if (ft_strncmp(str, "PATH", ft_strlen(str)) == 0)
+		{
+			free(str);
+			return (envp[i] + j + 1);
+		}
+		free(str);
+		i++;
 	}
-	else if (access(args[0], X_OK) == -1)
-	{
-		perror("Permission denied");
-		return (false);
-	}
-	execve(args[0], args, envp);
-	perror("Exec");
-	exit(127);
+	return (NULL);
 }
 
-char	*get_command(char *s, char **envp)
+char	*get_path_cmd(char *cmd, char **envp)
 {
-	int		fd[2];
-	char	*line;
-	pid_t	pid1;
+	char	**all_path;
+	char	*path;
+	char	*exec;
+	int		i;
 
-	if (pipe(fd) == -1)
-		return (NULL);
-	pid1 = fork();
-	if (pid1 < 0)
-		return (NULL);
-	if (pid1 == 0 && exec_command(fd, s, envp) == false)
-		return (NULL);
-	close(fd[1]);
-	line = get_next_line(fd[0]);
-	get_next_line(-1);
-	close(fd[0]);
-	if (!line || !line[0])
-		return (NULL);
-	return (line[ft_strlen(line) - 1] = 0, line);
+	i = -1;
+	all_path = ft_split(get_path_line(envp), ':');
+	while (all_path[++i])
+	{
+		path = ft_strjoin(all_path[i], "/");
+		exec = ft_strjoin(path, cmd);
+		free(path);
+		if (access(exec, (F_OK | X_OK)) == 0)
+		{
+			free_array(all_path);
+			return (exec);
+		}
+		free(exec);
+	}
+	free_array(all_path);
+	return (NULL);
 }
 
-void	print_output(int fd)
+int	check_path_cmd(char *cmd, char **envp)
 {
-	char	*line;
+	char	**all_path;
+	char	*path;
+	char	*exec;
+	int		i;
+	bool	status;
 
-	while (1)
+	i = -1;
+	status = false;
+	all_path = ft_split(get_path_line(envp), ':');
+	while (all_path[++i])
 	{
-		line = get_next_line(fd);
-		if (!line)
-			break ;
-		ft_printf("%s", line);
-		free(line);
+		path = ft_strjoin(all_path[i], "/");
+		exec = ft_strjoin(path, cmd);
+		free(path);
+		if (access(exec, F_OK) == 0)
+		{
+			if (access(exec, X_OK) == 0)
+			{
+				free(exec);
+				free_array(all_path);
+				return (0);
+			}
+			else
+				status = true;
+		}
+		free(exec);
 	}
-	get_next_line(-1);
+	free_array(all_path);
+	if (status)
+		return (2);
+	return (1);
 }

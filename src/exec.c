@@ -21,15 +21,16 @@ void	exec_child(char **argv, char **envp)
 	{
 		args = ft_split(argv[2], ' ');
 		if (!args)
-			exit(1);
-		command = get_command(args[0], envp);
-		if (!command)
-			(perror("Command not found"), free_array(args), exit(127));
-		else if (access(command, X_OK) == -1)
-			(perror("Permission denied"),
-				free_array(args), free(command), exit(127));
+			exit(127);
+		execve(args[0], args, envp);
+		if (check_path_cmd(args[0], envp) == 1)
+			(handle_error(args[0], -1), free_array(args), exit(127));
+		else if (check_path_cmd(args[0], envp) == 2)
+			(handle_error(args[0], 13),
+				free_array(args), exit(127));
+		command = get_path_cmd(args[0], envp);
 		execve(command, args, envp);
-		perror("Exec");
+		handle_error("Exec", errno);
 		free_array(args);
 		free(command);
 		exit(127);
@@ -45,15 +46,17 @@ void	exec_parent(char **argv, char **envp)
 	if (argv[3][0])
 	{
 		args = ft_split(argv[3], ' ');
-		command = get_command(args[0], envp);
-		if (!command)
-			(perror("Command not found"),
+		if (!args)
+			exit(127);
+		execve(args[0], args, envp);
+		if (check_path_cmd(args[0], envp) == 1)
+			(handle_error(args[0], -1), free_array(args), exit(127));
+		else if (check_path_cmd(args[0], envp) == 2)
+			(handle_error(args[0], 13),
 				free_array(args), exit(127));
-		else if (access(command, X_OK) == -1)
-			(perror("Permission denied"),
-				free_array(args), free(command), exit(127));
+		command = get_path_cmd(args[0], envp);
 		execve(command, args, envp);
-		perror("Exec");
+		handle_error("Exec", errno);
 		free_array(args);
 		free(command);
 		exit(127);

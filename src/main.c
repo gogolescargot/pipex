@@ -14,23 +14,23 @@
 
 int	main(int argc, char **argv, char **envp)
 {
-	int	fd[2];
-	int	pid1;
+	pid_t	pid;
+	int		fd[2];
 
 	if (argc != 5)
-		(perror("Bad number of parameters"), exit(1));
+		(handle_error("Bad number of parameters", 1), exit(1));
 	if (pipe(fd) < 0)
-		(perror("Pipe"), exit(1));
-	pid1 = fork();
-	if (pid1 < 0)
-		(perror("Fork"), exit(1));
-	if (pid1 == 0)
+		(handle_error("Pipe", errno), exit(1));
+	pid = fork();
+	if (pid < 0)
+		(handle_error("Fork", errno), exit(1));
+	if (pid == 0)
 	{
 		input_fd(fd, argv);
 		exec_child(argv, envp);
 	}
+	waitpid(pid, NULL, 0);
 	output_fd(fd, argv);
 	exec_parent(argv, envp);
-	close(fd[0]);
 	exit(0);
 }
