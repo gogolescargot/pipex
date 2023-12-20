@@ -29,8 +29,11 @@ int	main(int argc, char **argv, char **envp)
 		input_fd(fd, argv);
 		exec_child(argv, envp);
 	}
-	waitpid(pid, NULL, 0);
-	output_fd(fd, argv);
-	exec_parent(argv, envp);
+	else
+	{
+		waitpid(pid, NULL, 0);
+		output_fd(fd, argv);
+		exec_parent(argv, envp);
+	}
 	exit(0);
 }

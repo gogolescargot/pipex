@@ -16,30 +16,30 @@ void	input_fd(int *fd, char **argv)
 {
 	int	input_file;
 
-	dup2(fd[1], 1);
+	input_file = open(argv[1], O_RDONLY);
+	if (input_file < 0)
+		(handle_error(argv[1], errno), close(fd[0]), close(fd[1]), exit(1));
+	dup2(input_file, STDIN_FILENO);
+	close(input_file);
+	dup2(fd[1], STDOUT_FILENO);
 	close(fd[0]);
 	close(fd[1]);
 	if (access(argv[1], F_OK) == -1)
 		(handle_error(argv[1], 2), exit(1));
 	else if (access(argv[1], R_OK) == -1)
 		(handle_error(argv[1], 13), exit(1));
-	input_file = open(argv[1], O_RDONLY);
-	if (input_file < 0)
-		(handle_error(argv[1], errno), exit(1));
-	dup2(input_file, 0);
-	close(input_file);
 }
 
 void	output_fd(int *fd, char **argv)
 {
 	int	output_file;
 
-	dup2(fd[0], 0);
-	close(fd[1]);
-	close(fd[0]);
 	output_file = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC);
 	if (output_file < 0)
-		(handle_error(argv[4], errno), exit(1));
-	dup2(output_file, 1);
+		(handle_error(argv[4], errno), close(fd[0]), close(fd[1]), exit(1));
+	dup2(output_file, STDOUT_FILENO);
 	close(output_file);
+	dup2(fd[0], STDIN_FILENO);
+	close(fd[0]);
+	close(fd[1]);
 }

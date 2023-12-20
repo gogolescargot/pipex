@@ -17,25 +17,21 @@ void	exec_child(char **argv, char **envp)
 	char	**args;
 	char	*command;
 
-	if (argv[2][0])
-	{
-		args = ft_split(argv[2], ' ');
-		if (!args)
-			exit(127);
-		execve(args[0], args, envp);
-		if (check_path_cmd(args[0], envp) == 1)
-			(handle_error(args[0], -1), free_array(args), exit(127));
-		else if (check_path_cmd(args[0], envp) == 2)
-			(handle_error(args[0], 13),
-				free_array(args), exit(127));
-		command = get_path_cmd(args[0], envp);
-		execve(command, args, envp);
-		handle_error("Exec", errno);
-		free_array(args);
-		free(command);
+	args = ft_split(argv[2], ' ');
+	if (!args)
 		exit(127);
-	}
-	print_output(1);
+	execve(args[0], args, envp);
+	if (check_path_cmd(args[0], envp) == 1)
+		(handle_error(args[0], -1), free_array(args), exit(127));
+	else if (check_path_cmd(args[0], envp) == 2)
+		(handle_error(args[0], 13),
+			free_array(args), exit(127));
+	command = get_path_cmd(args[0], envp);
+	execve(command, args, envp);
+	handle_error("Exec", errno);
+	free_array(args);
+	free(command);
+	exit(127);
 }
 
 void	exec_parent(char **argv, char **envp)
@@ -43,23 +39,19 @@ void	exec_parent(char **argv, char **envp)
 	char	*command;
 	char	**args;
 
-	if (argv[3][0])
-	{
-		args = ft_split(argv[3], ' ');
-		if (!args)
-			exit(127);
-		execve(args[0], args, envp);
-		if (check_path_cmd(args[0], envp) == 1)
-			(handle_error(args[0], -1), free_array(args), exit(127));
-		else if (check_path_cmd(args[0], envp) == 2)
-			(handle_error(args[0], 13),
-				free_array(args), exit(127));
-		command = get_path_cmd(args[0], envp);
-		execve(command, args, envp);
-		handle_error("Exec", errno);
-		free_array(args);
-		free(command);
+	args = ft_split(argv[3], ' ');
+	if (!args)
 		exit(127);
-	}
-	print_output(0);
+	execve(args[0], args, envp);
+	if (check_path_cmd(args[0], envp) == 1)
+		(handle_error(args[0], -1), free_array(args), exit(127));
+	else if (check_path_cmd(args[0], envp) == 2)
+		(handle_error(args[0], 13),
+			free_array(args), exit(127));
+	command = get_path_cmd(args[0], envp);
+	execve(command, args, envp);
+	handle_error("Exec", errno);
+	free_array(args);
+	free(command);
+	exit(127);
 }
