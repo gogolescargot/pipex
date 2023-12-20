@@ -61,6 +61,13 @@ char	*get_path_cmd(char *cmd, char **envp)
 	return (NULL);
 }
 
+int	check_path_cmd_utils(char **exec, char ***all_path)
+{
+	free(*exec);
+	free_array(*all_path);
+	return (0);
+}
+
 int	check_path_cmd(char *cmd, char **envp)
 {
 	char	**all_path;
@@ -77,17 +84,10 @@ int	check_path_cmd(char *cmd, char **envp)
 		path = ft_strjoin(all_path[i], "/");
 		exec = ft_strjoin(path, cmd);
 		free(path);
-		if (access(exec, F_OK) == 0)
-		{
-			if (access(exec, X_OK) == 0)
-			{
-				free(exec);
-				free_array(all_path);
-				return (0);
-			}
-			else
-				status = true;
-		}
+		if (access(exec, (F_OK | X_OK)) == 0)
+			return (check_path_cmd_utils(&exec, &all_path));
+		else if (access(exec, F_OK) == 0)
+			status = true;
 		free(exec);
 	}
 	free_array(all_path);

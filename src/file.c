@@ -35,7 +35,7 @@ void	parent_process(int *fd, char **argv, char **envp)
 {
 	int	output_file;
 
-	output_file = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC);
+	output_file = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0777);
 	if (output_file < 0)
 		(handle_error(argv[4], errno), close(fd[0]), close(fd[1]), exit(1));
 	dup2(output_file, STDOUT_FILENO);
