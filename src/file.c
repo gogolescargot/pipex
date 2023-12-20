@@ -12,7 +12,7 @@
 
 #include "../inc/pipex.h"
 
-void	input_fd(int *fd, char **argv)
+void	child_process(int *fd, char **argv, char **envp)
 {
 	int	input_file;
 
@@ -28,9 +28,10 @@ void	input_fd(int *fd, char **argv)
 		(handle_error(argv[1], 2), exit(1));
 	else if (access(argv[1], R_OK) == -1)
 		(handle_error(argv[1], 13), exit(1));
+	exec_child(argv, envp);
 }
 
-void	output_fd(int *fd, char **argv)
+void	parent_process(int *fd, char **argv, char **envp)
 {
 	int	output_file;
 
@@ -42,4 +43,5 @@ void	output_fd(int *fd, char **argv)
 	dup2(fd[0], STDIN_FILENO);
 	close(fd[0]);
 	close(fd[1]);
+	exec_parent(argv, envp);
 }

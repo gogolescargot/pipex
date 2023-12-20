@@ -14,26 +14,28 @@
 
 int	main(int argc, char **argv, char **envp)
 {
-	pid_t	pid;
+	pid_t	pid1;
+	pid_t	pid2;
+	int		status2;
 	int		fd[2];
 
 	if (argc != 5)
 		(handle_error("Bad number of parameters", 1), exit(1));
 	if (pipe(fd) < 0)
 		(handle_error("Pipe", errno), exit(1));
-	pid = fork();
-	if (pid < 0)
+	pid1 = fork();
+	if (pid1 < 0)
 		(handle_error("Fork", errno), exit(1));
-	if (pid == 0)
-	{
-		input_fd(fd, argv);
-		exec_child(argv, envp);
-	}
-	else
-	{
-		waitpid(pid, NULL, 0);
-		output_fd(fd, argv);
-		exec_parent(argv, envp);
-	}
-	exit(0);
+	if (pid1 == 0)
+		child_process(fd, argv, envp);
+	pid2 = fork();
+	if (pid2 < 0)
+		(handle_error("Fork", errno), exit(1));
+	if (pid2 == 0)
+		parent_process(fd, argv, envp);
+	close(fd[0]);
+	close(fd[1]);
+	waitpid(pid1, NULL, 0);
+	waitpid(pid2, &status2, 0);
+	exit(WEXITSTATUS(status2));
 }

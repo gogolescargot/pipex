@@ -12,21 +12,6 @@
 
 #include "../inc/pipex.h"
 
-void	print_output(int fd)
-{
-	char	*line;
-
-	while (1)
-	{
-		line = get_next_line(fd);
-		if (!line)
-			break ;
-		ft_printf("%s", line);
-		free(line);
-	}
-	get_next_line(-1);
-}
-
 void	handle_error(char *str, int exit_code)
 {
 	if (exit_code == -1)
