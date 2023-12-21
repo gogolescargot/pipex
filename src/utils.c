@@ -32,6 +32,8 @@ void	free_array(char **array)
 	size_t	i;
 
 	i = 0;
+	if (!array)
+		return ;
 	while (array[i])
 	{
 		free(array[i]);

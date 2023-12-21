@@ -19,7 +19,7 @@ char	*get_path_line(char **envp)
 	char	*str;
 
 	i = 0;
-	while (envp[i])
+	while (envp && envp[i])
 	{
 		j = 0;
 		while (envp[i][j] && envp[i][j] != '=')
@@ -45,7 +45,7 @@ char	*get_path_cmd(char *cmd, char **envp)
 
 	i = -1;
 	all_path = ft_split(get_path_line(envp), ':');
-	while (all_path[++i])
+	while (all_path && all_path[++i])
 	{
 		path = ft_strjoin(all_path[i], "/");
 		exec = ft_strjoin(path, cmd);
@@ -79,7 +79,7 @@ int	check_path_cmd(char *cmd, char **envp)
 	i = -1;
 	status = false;
 	all_path = ft_split(get_path_line(envp), ':');
-	while (all_path[++i])
+	while (all_path && all_path[++i])
 	{
 		path = ft_strjoin(all_path[i], "/");
 		exec = ft_strjoin(path, cmd);
