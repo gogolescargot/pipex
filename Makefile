@@ -25,13 +25,13 @@ INCL_DIR	=	inc/
 
 NAME	=	pipex
 
-NAME_B	=	
+NAME_B	=	pipex
 
 LIBFT	=	$(LIBFT_DIR)libft.a
 
-SRCS	=	main.c parsing.c utils.c exec.c file.c \
+SRCS	=	pipex.c path.c utils.c \
 
-SRCS_B	=	 \
+SRCS_B	=	pipex_bonus.c path.c utils_bonus.c utils.c \
 
 OBJS	=	$(addprefix $(OBJS_DIR), $(SRCS:.c=.o))
 

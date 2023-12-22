@@ -26,11 +26,10 @@
 void	handle_error(char *str, int exit_code);
 char	*get_path_cmd(char *cmd, char **envp);
 int		check_path_cmd(char *cmd, char **envp);
-void	free_array(char **array);
-void	child_process(int *fd, char **argv, char **envp);
-void	parent_process(int *fd, char **argv, char **envp);
-void	exec_child(char **argv, char **envp);
-void	exec_parent(char **argv, char **envp);
-void	print_output(int fd);
+void	file(int *fd, char *file, bool mode);
+void	exec(char *cmd, char **envp);
+void	pipex(char **argv, char **envp);
+void	pipex_bonus(char *cmd, char **envp);
+void	file_bonus(char *file, bool mode, bool here_doc);
 
 #endif

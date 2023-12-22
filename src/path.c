@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parsing.c                                          :+:      :+:    :+:   */
+/*   path.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ggalon <ggalon@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -52,19 +52,19 @@ char	*get_path_cmd(char *cmd, char **envp)
 		free(path);
 		if (access(exec, (F_OK | X_OK)) == 0)
 		{
-			free_array(all_path);
+			ft_arrayclear(all_path);
 			return (exec);
 		}
 		free(exec);
 	}
-	free_array(all_path);
+	ft_arrayclear(all_path);
 	return (NULL);
 }
 
 int	check_path_cmd_utils(char **exec, char ***all_path)
 {
 	free(*exec);
-	free_array(*all_path);
+	ft_arrayclear(*all_path);
 	return (0);
 }
 
@@ -90,7 +90,7 @@ int	check_path_cmd(char *cmd, char **envp)
 			status = true;
 		free(exec);
 	}
-	free_array(all_path);
+	ft_arrayclear(all_path);
 	if (status)
 		return (2);
 	return (1);
