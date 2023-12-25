@@ -12,7 +12,13 @@
 
 #include "../inc/pipex.h"
 
-void	pipex_bonus(char *cmd, char **envp)
+void	close_fds(int *fd)
+{
+	close(fd[0]);
+	close(fd[1]);
+}
+
+void	pipex_bonus(char *cmd, char **envp, char *file, int state)
 {
 	pid_t	pid;
 	int		fd[2];
@@ -24,14 +30,20 @@ void	pipex_bonus(char *cmd, char **envp)
 		(handle_error("Fork", errno), exit(1));
 	if (pid == 0)
 	{
-		dup2(fd[1], STDOUT_FILENO);
-		close(fd[0]);
-		close(fd[1]);
+		if (state <= 0)
+		{
+			if (state == -1)
+				file_bonus(file, true, false);
+			dup2(fd[1], STDOUT_FILENO);
+		}
+		else
+			file_bonus(file, false, (state == 2));
+		close_fds(fd);
 		exec(cmd, envp);
 	}
+	waitpid(pid, NULL, 0);
 	dup2(fd[0], STDIN_FILENO);
-	close(fd[0]);
-	close(fd[1]);
+	close_fds(fd);
 }
 
 void	file_bonus(char *file, bool mode, bool here_doc)
@@ -45,10 +57,7 @@ void	file_bonus(char *file, bool mode, bool here_doc)
 	else
 		file_fd = open(file, O_WRONLY | O_CREAT | O_APPEND, 0777);
 	if (file_fd < 0 && mode)
-	{
-		handle_error(file, errno);
-		return ;
-	}
+		(handle_error(file, errno), exit(1));
 	else if (file_fd < 0 && !mode)
 		(handle_error(file, errno), exit(1));
 	if (mode)

@@ -61,11 +61,17 @@ char	*get_path_cmd(char *cmd, char **envp)
 	return (NULL);
 }
 
-int	check_path_cmd_utils(char **exec, char ***all_path)
+int	check_path_cmd_utils(char **exec, char **a_p, int ret_v, bool st)
 {
+	ft_arrayclear(a_p);
+	if (ret_v == -1)
+	{
+		if (st)
+			return (2);
+		return (1);
+	}
 	free(*exec);
-	ft_arrayclear(*all_path);
-	return (0);
+	return (ret_v);
 }
 
 int	check_path_cmd(char *cmd, char **envp)
@@ -84,14 +90,13 @@ int	check_path_cmd(char *cmd, char **envp)
 		path = ft_strjoin(all_path[i], "/");
 		exec = ft_strjoin(path, cmd);
 		free(path);
+		if (!ft_strncmp(cmd, ".", 2) || !ft_strncmp(cmd, "..", 3))
+			return (check_path_cmd_utils(&exec, all_path, 1, false));
 		if (access(exec, (F_OK | X_OK)) == 0)
-			return (check_path_cmd_utils(&exec, &all_path));
+			return (check_path_cmd_utils(&exec, all_path, 0, false));
 		else if (access(exec, F_OK) == 0)
 			status = true;
 		free(exec);
 	}
-	ft_arrayclear(all_path);
-	if (status)
-		return (2);
-	return (1);
+	return (check_path_cmd_utils(NULL, all_path, -1, status));
 }

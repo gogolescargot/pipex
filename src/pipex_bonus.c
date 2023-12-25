@@ -47,14 +47,17 @@ void	here_doc(char **argv)
 	{
 		dup2(fd[0], 0);
 		waitpid(pid, NULL, 0);
+		close(fd[0]);
 		close(fd[1]);
 	}
 }
 
 int	main(int argc, char **argv, char **envp)
 {
-	int		i;
+	int	i;
+	int	state;
 
+	state = 1;
 	if (argc < 5)
 		(handle_error("Bad number of parameters", 1), exit(1));
 	if (!ft_strncmp(argv[1], "here_doc", 9))
@@ -62,17 +65,14 @@ int	main(int argc, char **argv, char **envp)
 		i = 3;
 		if (argc < 6)
 			(handle_error("Bad number of parameters", 1), exit(1));
+		state = 2;
 		here_doc(argv);
-		file_bonus(argv[argc - 1], false, true);
 	}
 	else
-	{
 		i = 2;
-		file_bonus(argv[argc - 1], false, false);
-		file_bonus(argv[1], true, false);
-	}
-	while (i < argc - 2)
-		pipex_bonus(argv[i++], envp);
-	exec(argv[argc - 2], envp);
+	pipex_bonus(argv[i], envp, argv[1], state * -1);
+	while (++i < argc - 2)
+		pipex_bonus(argv[i], envp, argv[1], 0);
+	pipex_bonus(argv[argc - 2], envp, argv[argc - 1], state);
 	exit(0);
 }

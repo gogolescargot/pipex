@@ -29,6 +29,7 @@ int	main(int argc, char **argv, char **envp)
 		file(fd, argv[1], true);
 		exec(argv[2], envp);
 	}
+	waitpid(pid, NULL, 0);
 	file(fd, argv[4], false);
 	exec(argv[3], envp);
 	exit(0);
