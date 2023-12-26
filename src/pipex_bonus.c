@@ -16,7 +16,6 @@ void	put_here_doc(char *limiter, int *fd)
 {
 	char	*line;
 
-	close(fd[0]);
 	while (1)
 	{
 		line = get_next_line(0);
@@ -24,11 +23,17 @@ void	put_here_doc(char *limiter, int *fd)
 			&& line[ft_strlen(limiter)] == '\n')
 		{
 			free(line);
+			get_next_line(-1);
+			close(fd[1]);
+			close(fd[0]);
 			exit(0);
 		}
 		ft_putstr_fd(line, fd[1]);
 		free(line);
 	}
+	get_next_line(-1);
+	close(fd[0]);
+	close(fd[1]);
 }
 
 void	here_doc(char **argv)

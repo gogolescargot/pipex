@@ -30,6 +30,6 @@ void	file(int *fd, char *file, bool mode);
 void	exec(char *cmd, char **envp);
 void	pipex(char **argv, char **envp);
 void	pipex_bonus(char *cmd, char **envp, char *file, int state);
-void	file_bonus(char *file, bool mode, bool here_doc);
+void	file_bonus(char *file, bool mode, int *fd, bool here_doc);
 
 #endif

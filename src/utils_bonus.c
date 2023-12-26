@@ -33,11 +33,12 @@ void	pipex_bonus(char *cmd, char **envp, char *file, int state)
 		if (state <= 0)
 		{
 			if (state == -1)
-				file_bonus(file, true, false);
+				file_bonus(file, true, fd, false);
 			dup2(fd[1], STDOUT_FILENO);
+			close_fds(fd);
 		}
 		else
-			file_bonus(file, false, (state == 2));
+			file_bonus(file, false, fd, (state == 2));
 		close_fds(fd);
 		exec(cmd, envp);
 	}
@@ -46,7 +47,7 @@ void	pipex_bonus(char *cmd, char **envp, char *file, int state)
 	close_fds(fd);
 }
 
-void	file_bonus(char *file, bool mode, bool here_doc)
+void	file_bonus(char *file, bool mode, int *fd, bool here_doc)
 {
 	int	file_fd;
 
@@ -57,9 +58,9 @@ void	file_bonus(char *file, bool mode, bool here_doc)
 	else
 		file_fd = open(file, O_WRONLY | O_CREAT | O_APPEND, 0777);
 	if (file_fd < 0 && mode)
-		(handle_error(file, errno), exit(1));
+		(handle_error(file, errno), close_fds(fd), exit(1));
 	else if (file_fd < 0 && !mode)
-		(handle_error(file, errno), exit(1));
+		(handle_error(file, errno), close_fds(fd), exit(1));
 	if (mode)
 	{
 		dup2(file_fd, STDIN_FILENO);
