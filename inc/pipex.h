@@ -23,13 +23,21 @@
 # include <errno.h>
 # include "../libft/inc/libft.h"
 
-void	handle_error(char *str, int error_code);
-char	*get_path_cmd(char *cmd, char **envp);
-int		check_path_cmd(char *cmd, char **envp);
+void	pipex(char **argv, char **envp);
 void	file(int *fd, char *file, bool mode);
 void	exec(char *cmd, char **envp);
-void	pipex(char **argv, char **envp);
-void	pipex_bonus(char *cmd, char **envp, char *file, int state);
+
+char	*get_path_cmd(char *cmd, char **envp);
+int		check_path_cmd(char *cmd, char **envp);
+
+int		wait_process(int pid);
+bool	check_folder(char *path);
+void	close_fds(int *fd);
+void	handle_error(char *str, int error_code);
+
+int		pipex_bonus(char *cmd, char **envp, char *file, int state);
 void	file_bonus(char *file, bool mode, int *fd, bool here_doc);
+void	here_doc(char **argv);
+void	put_here_doc(char *limiter, int *fd);
 
 #endif

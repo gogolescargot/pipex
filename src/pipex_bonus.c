@@ -12,51 +12,6 @@
 
 #include "../inc/pipex.h"
 
-void	put_here_doc(char *limiter, int *fd)
-{
-	char	*line;
-
-	while (1)
-	{
-		line = get_next_line(0);
-		if (!ft_strncmp(line, limiter, ft_strlen(limiter))
-			&& line[ft_strlen(limiter)] == '\n')
-		{
-			free(line);
-			get_next_line(-1);
-			close(fd[1]);
-			close(fd[0]);
-			exit(0);
-		}
-		ft_putstr_fd(line, fd[1]);
-		free(line);
-	}
-	get_next_line(-1);
-	close(fd[0]);
-	close(fd[1]);
-}
-
-void	here_doc(char **argv)
-{
-	int		fd[2];
-	pid_t	pid;
-
-	if (pipe(fd) < 0)
-		(handle_error("Pipe", errno), exit(1));
-	pid = fork();
-	if (pid < 0)
-		(handle_error("Fork", errno), exit(1));
-	if (pid == 0)
-		put_here_doc(argv[2], fd);
-	else
-	{
-		dup2(fd[0], 0);
-		waitpid(pid, NULL, 0);
-		close(fd[0]);
-		close(fd[1]);
-	}
-}
-
 int	main(int argc, char **argv, char **envp)
 {
 	int	i;
@@ -78,6 +33,6 @@ int	main(int argc, char **argv, char **envp)
 	pipex_bonus(argv[i], envp, argv[1], state * -1);
 	while (++i < argc - 2)
 		pipex_bonus(argv[i], envp, argv[1], 0);
-	pipex_bonus(argv[argc - 2], envp, argv[argc - 1], state);
-	exit(0);
+	return (wait_process(pipex_bonus(argv[argc - 2], envp
+				, argv[argc - 1], state)));
 }

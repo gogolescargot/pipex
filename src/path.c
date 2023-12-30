@@ -100,3 +100,19 @@ int	check_path_cmd(char *cmd, char **envp)
 	}
 	return (check_path_cmd_utils(NULL, all_path, -1, status));
 }
+
+bool	check_folder(char *path)
+{
+	int	fd;
+
+	fd = open(path, O_WRONLY);
+	if (errno == 21)
+	{
+		if (fd != -1)
+			close(fd);
+		return (true);
+	}
+	if (fd != -1)
+		close(fd);
+	return (false);
+}

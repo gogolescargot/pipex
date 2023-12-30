@@ -29,9 +29,9 @@ NAME_B	=	pipex
 
 LIBFT	=	$(LIBFT_DIR)libft.a
 
-SRCS	=	pipex.c path.c utils.c \
+SRCS	=	pipex.c path.c utils.c exec.c \
 
-SRCS_B	=	pipex_bonus.c path.c utils_bonus.c utils.c \
+SRCS_B	=	pipex_bonus.c utils_bonus.c utils.c exec.c path.c \
 
 OBJS	=	$(addprefix $(OBJS_DIR), $(SRCS:.c=.o))
 
