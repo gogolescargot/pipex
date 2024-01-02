@@ -43,13 +43,16 @@ int	wait_process(int pid)
 		if (WIFEXITED(status))
 			ret_value = WEXITSTATUS(status);
 		else
-			ret_value = (128 + WTERMSIG(status));
+			return (128 + WTERMSIG(status));
 	}
+	unlink(".here_doc");
 	return (ret_value);
 }
 
-void	close_fds(int *fd)
+void	close_fds(int *fd, int file)
 {
+	if (file != -1)
+		close(file);
 	close(fd[0]);
 	close(fd[1]);
 }

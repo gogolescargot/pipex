@@ -36,6 +36,6 @@ int	main(int argc, char **argv, char **envp)
 	}
 	if (pid1 < 0 || pid2 < 0)
 		(handle_error("Fork", errno), exit(1));
-	close_fds(fd);
+	close_fds(fd, -1);
 	return (wait_process(pid2));
 }

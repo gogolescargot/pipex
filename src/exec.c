@@ -60,7 +60,7 @@ void	file(int *fd, char *file, bool mode)
 	else
 		file_fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0777);
 	if (file_fd < 0)
-		(handle_error(file, errno), close_fds(fd), exit(1));
+		(handle_error(file, errno), close_fds(fd, -1), exit(1));
 	if (mode)
 	{
 		dup2(file_fd, STDIN_FILENO);
@@ -72,5 +72,5 @@ void	file(int *fd, char *file, bool mode)
 		dup2(fd[0], STDIN_FILENO);
 	}
 	close(file_fd);
-	close_fds(fd);
+	close_fds(fd, -1);
 }

@@ -32,7 +32,7 @@ int		check_path_cmd(char *cmd, char **envp);
 
 int		wait_process(int pid);
 bool	check_folder(char *path);
-void	close_fds(int *fd);
+void	close_fds(int *fd, int file);
 void	handle_error(char *str, int error_code);
 
 int		pipex_bonus(char *cmd, char **envp, char *file, int state);
