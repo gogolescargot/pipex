@@ -37,7 +37,7 @@ void	handle_error(char *str, int error_code);
 
 int		pipex_bonus(char *cmd, char **envp, char *file, int state);
 void	file_bonus(char *file, bool mode, int *fd, bool here_doc);
-void	here_doc(char **argv);
+void	here_doc(char *limiter);
 void	put_here_doc(char *limiter, int *fd);
 
 #endif

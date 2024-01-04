@@ -26,7 +26,7 @@ int	main(int argc, char **argv, char **envp)
 		if (argc < 6)
 			(handle_error("Bad number of parameters", 1), exit(1));
 		state = 2;
-		here_doc(argv);
+		here_doc(argv[2]);
 	}
 	else
 		i = 2;

@@ -94,7 +94,7 @@ void	put_here_doc(char *limiter, int *fd)
 	close_fds(fd, file);
 }
 
-void	here_doc(char **argv)
+void	here_doc(char *limiter)
 {
 	int		fd[2];
 	pid_t	pid;
@@ -105,7 +105,7 @@ void	here_doc(char **argv)
 	if (pid < 0)
 		(handle_error("Fork", errno), exit(1));
 	if (pid == 0)
-		put_here_doc(argv[2], fd);
+		put_here_doc(limiter, fd);
 	else
 	{
 		dup2(fd[0], 0);
