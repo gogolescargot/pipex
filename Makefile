@@ -25,7 +25,7 @@ INCL_DIR	=	inc/
 
 NAME	=	pipex
 
-NAME_B	=	pipex
+NAME_B	=	pipex_bonus
 
 LIBFT	=	$(LIBFT_DIR)libft.a
 
