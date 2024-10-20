@@ -14,6 +14,9 @@ by using it in your program.
 # Compile
 make
 
+# Compile with bonus features
+make bonus
+
 # Delete Objects files
 make clean
 
@@ -23,6 +26,6 @@ make fclean
 # Full Clean and Recompile
 make re
 
-# Start (4 arguments, Input, Path, Path, Output)
+# Start (4 minimum arguments, Input, Command, Command, ..., Output)
 ./pipex /dev/stdin ls wc /dev/stdout
 ```
